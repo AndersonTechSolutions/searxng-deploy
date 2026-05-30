@@ -15,6 +15,7 @@ services:
     image: searxng/searxng:latest
     container_name: searxng
     restart: unless-stopped
+    network_mode: "bridge"   # host pools are exhausted; reuse default bridge (no new per-stack net)
     environment:
       SEARXNG_BASE_URL: http://10.10.0.162:8095/
       SEARXNG_SECRET: ${SEARXNG_SECRET}
