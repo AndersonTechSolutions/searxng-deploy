@@ -1,0 +1,35 @@
+name: searxng
+
+# SearXNG — privacy-respecting metasearch (AndersonTech Search).
+# Upstream: https://github.com/searxng/searxng
+# Image: searxng/searxng — we track :latest and rely on Komodo poll_for_updates
+# to pick up new releases.
+#
+# Host config lives at /opt/searxng/settings.yml (enables the JSON API; merged
+# over SearXNG defaults via use_default_settings: true).
+# The secret_key is provided through the SEARXNG_SECRET env var, sourced from the
+# Komodo Variable [[SEARXNG_SECRET]] (configured in the stack's environment).
+
+services:
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+    restart: unless-stopped
+    environment:
+      SEARXNG_BASE_URL: http://10.10.0.162:8095/
+      SEARXNG_SECRET: ${SEARXNG_SECRET}
+    volumes:
+      - /opt/searxng:/etc/searxng
+    ports:
+      - "10.10.0.162:8095:8080"
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "1"
